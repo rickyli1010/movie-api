@@ -25,4 +25,4 @@ React - Frontend framework
 
 Semantic UI React - CSS Framework
 
-The Movie Database API - weater data
+The Movie Database API - movie, tv and casts data
