@@ -22,18 +22,16 @@ class App extends Component {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+
   getMovies = async () => {
 
-    console.log("started")
     this.setState({movieStart: true})
 
     let movieId = []
     let movieCastId = new Set([]);
-
     let pageIndex = 1;
 
     for(let i = 1; i <= pageIndex; i++){
-
       if(i !== 0 && i % 30 === 0){
         await this.sleep(9000)
       }
@@ -53,17 +51,12 @@ class App extends Component {
     await this.sleep(3000)
 
     for (let i = 0; i < movieId.length; i++){
-
-      console.log("loading ", i+1, " of ", movieId.length)
-      this.setState({movieStatus: Math.round(i / movieId.length * 100) * 100 / 100 }, () => {
-        console.log(this.state.movieStatus, ' %');
-      })
+      this.setState({movieStatus: Math.round(i / movieId.length * 100) * 100 / 100 })
 
       await this.sleep(200)
 
       const movieCastApi = await fetch(`https://api.themoviedb.org/3/movie/${movieId[i]}/credits?api_key=${API_KEY}`)
       const movieCastData = await movieCastApi.json();
-
 
       movieCastData.cast.forEach(cast => {
         movieCastId.add(cast.id)
@@ -75,8 +68,8 @@ class App extends Component {
     return movieCastId;
   }
 
+
   getTV = async () => {
-    console.log('Start loading TV shows Data')
     this.setState({tvStart: true})
 
     let tvId = []
@@ -87,7 +80,6 @@ class App extends Component {
     for(let i = 1; i <= pageIndex; i++){
 
       if(i !== 0 && i % 30 === 0){
-        console.log("wait")
         await this.sleep(9000)
       }
 
@@ -106,11 +98,7 @@ class App extends Component {
     await this.sleep(3000)
 
     for (let i = 0; i < tvId.length; i++){
-
-      console.log("loading ", i+1, " of ", tvId.length)
-      this.setState({tvStatus: Math.round(i / tvId.length * 100) * 100 / 100 }, () => {
-        console.log(this.state.tvStatus, ' %');
-      })
+      this.setState({tvStatus: Math.round(i / tvId.length * 100) * 100 / 100 })
 
       await this.sleep(200)
 
@@ -124,13 +112,12 @@ class App extends Component {
     }
 
     this.setState({tvFinish: true})
-
     return tvCastId;
   }
 
+
   run = async() => {
     let result = []
-
     const movieCast = await this.getMovies();
     await this.sleep(3000)
     const tvCast = await this.getTV();
@@ -141,34 +128,10 @@ class App extends Component {
       }
     })
 
-    console.log(result.length, result)
     this.setState({result, finished: true})
 
   }
 
-  createTable = (result) => {
-    let table = []
-    let index = 0;
-    let row = Math.ceil(index / 3)
-
-    // Outer loop to create parent
-    for (let i = 0; i < row; i++) {
-      let children = []
-      //Inner loop to create children
-      for (let j = 0; j < 5; j++) {
-        if (index < result.length){
-          children.push(<td>{result[index]}</td>)
-          index ++;
-        }
-        else{
-          children.push(<td></td>)
-        }
-      }
-      //Create the parent and add the children
-      table.push(<tr>{children}</tr>)
-    }
-    return table
-  }
 
   render() {
     return (
