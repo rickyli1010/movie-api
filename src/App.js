@@ -23,6 +23,7 @@ class App extends Component {
   }
 
 
+  // Get movie casts
   getMovies = async () => {
 
     this.setState({movieStart: true})
@@ -36,6 +37,7 @@ class App extends Component {
         await this.sleep(9000)
       }
 
+      //getting all movies in Dec 2017
       let movieApiCall = await fetch(`http://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_date.gte=2017-12-01&primary_release_date.lte=2017-12-31&with_release_type=2|3&page=${i}`);
       let movieData = await movieApiCall.json();
 
@@ -51,13 +53,17 @@ class App extends Component {
     await this.sleep(3000)
 
     for (let i = 0; i < movieId.length; i++){
+      // Update progress %
       this.setState({movieStatus: Math.round(i / movieId.length * 100) * 100 / 100 })
 
+      // Wait 0.2 secons between calls
       await this.sleep(200)
 
+      // Get all casts from movie
       const movieCastApi = await fetch(`https://api.themoviedb.org/3/movie/${movieId[i]}/credits?api_key=${API_KEY}`)
       const movieCastData = await movieCastApi.json();
 
+      // Push cast to Set
       movieCastData.cast.forEach(cast => {
         movieCastId.add(cast.id)
       })
@@ -69,6 +75,7 @@ class App extends Component {
   }
 
 
+  // Get all TV casts
   getTV = async () => {
     this.setState({tvStart: true})
 
@@ -122,6 +129,7 @@ class App extends Component {
     await this.sleep(3000)
     const tvCast = await this.getTV();
 
+    // Compcare tv Cast against Movie cast
     movieCast.forEach(id => {
       if(tvCast.has(id)){
         result.push(id)
